@@ -2,37 +2,41 @@ package com.faffo.login_demo.controller;
 
 import com.faffo.login_demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import com.faffo.login_demo.dto.UserDTO;
 
-@Controller
-public class LoginController {
-    @Autowired
-    private UserService userService;
+@RestController
+@CrossOrigin(origins = "http://localhost:3000")
 
-    @GetMapping("/login")
-    public String showLoginForm() {
-        return "login";
-    }
-    @PostMapping("/login")
-    public String login(@RequestParam String username,
-                        @RequestParam String password,
-                        Model model) {
-        boolean success = userService.login(username, password);
-        if (success) {
-            model.addAttribute("mensaje", "Login exitoso");
-            return "success";
-        } else {
-            model.addAttribute("error", "Usuario o Contraseña incorrectos");
+    public class LoginController {
+        @Autowired
+        private UserService userService;
+
+        @GetMapping("/login")
+        public String showLoginForm() {
             return "login";
         }
+
+        @PostMapping("/login")
+        public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
+            boolean success = userService.login(userDTO.getUsername(), userDTO.getPassword());
+            if (success) {
+                return ResponseEntity.ok().body("{\"message\": \"¡Login exitoso!\"}");
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{\"message\": \"¡Credenciales invalidas!\"}");
+            }
+        }
+
+        @PostMapping("/register")
+        @ResponseBody
+        public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
+            userService.registerUser(userDTO.getUsername(), userDTO.getPassword());
+            return ResponseEntity.ok().body("{\"message\": \"¡Usuario registrado con exito!\"}");
+        }
     }
-    @PostMapping("/register")
-    @ResponseBody
-    public String register(@RequestParam String username,
-                           @RequestParam String password) {
-        userService.registerUser(username, password);
-        return "Usuario registrado exitosamente";
-    }
-}
+

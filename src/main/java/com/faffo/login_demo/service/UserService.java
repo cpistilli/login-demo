@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
+
 @Service
 public class UserService {
     @Autowired
@@ -31,11 +32,4 @@ public class UserService {
 
 }
 
-//public User registerUser(String username, String password) {
-  //  Optional<User> existingUser = userRepository.findByUsername(username);
-    //if (existingUser.isPresent()) {
-      //  throw new IllegalArgumentException("El nombre de usuario ya esta en uso");
-    //}
-    //User user = new User(username, password);
-    //return userRepository.save(user);
-//}
+

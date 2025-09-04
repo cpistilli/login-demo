@@ -3,14 +3,21 @@ import { useNavigate } from "react-router-dom";
 import cities from "../datos/paraguayCities.json";
 import './Page.css';
 
+function normalizeText(text) {
+    return text
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+}
+
 export default function CitiesPage() {
     const [query, setQuery] = useState("");
     const navigate = useNavigate();
 
     const filtered = useMemo(() => {
         return cities
-            .filter(c => c.label.toLowerCase().includes(query.toLowerCase()))
-            .sort((a, b) => a.label.localeCompare(b))
+            .filter(c => normalizeText(c.label).includes(normalizeText(query)))
+            .sort((a, b) => a.label.localeCompare(b.label))
     }, [query]);
 
     return (
